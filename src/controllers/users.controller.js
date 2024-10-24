@@ -3,13 +3,13 @@ const bcrypt = require('bcrypt');
 
 // Crear un nuevo usuario
 const createNewUser = async (req, res) => {
-    const { email, contraseña, nombre } = req.body;
+    const { email, password, nombre } = req.body;
 
-    if (!email || !contraseña || !nombre) {
+    if (!email || !password || !nombre) {
         return res.status(400).json({ message: 'Todos los campos son requeridos' });
     }
 
-    const hashedPassword = await bcrypt.hash(contraseña, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = {
         email,

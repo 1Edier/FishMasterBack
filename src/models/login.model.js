@@ -1,10 +1,8 @@
-// Simulación de base de datos con un usuario estático
-const users = [
-    { id: 1, email: 'admin', password: 'password123' }
-];
+const pool = require('../configs/db.config');
 
-const findUserByEmail = (username) => {
-    return users.find(user => user.email === username);
+const findUserByEmail = async (correo) => {
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);
+    return rows.length > 0 ? rows[0] : null;
 };
 
 module.exports = { findUserByEmail };

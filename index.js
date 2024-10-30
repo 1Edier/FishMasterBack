@@ -7,11 +7,13 @@ app.use(express.json());
 
 const loginRouter = require('./src/routes/login.route');
 const userRouter = require('./src/routes/users.routes');
+const especieRouter = require('./src/routes/especies.routes')
 
 const { authenticateToken } = require('./src/middleware/auth.middleware');
 
 app.use('/login', loginRouter);
 app.use('/users', authenticateToken, userRouter);
+app.use('/especies', authenticateToken, especieRouter);
 
 
 app.listen(PORT, () => {

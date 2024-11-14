@@ -14,4 +14,9 @@ const getAllDatos = async () => {
     return rows;
 };
 
-module.exports = { createData, getAllDatos };
+const getDatosById = async (id) => {
+    const [rows] = await pool.query('SELECT * FROM datos_estanque WHERE id_dato_estanque = ?', [id]);
+    return rows.length > 0 ? rows[0] : null;
+};
+
+module.exports = { createData, getAllDatos, getDatosById };

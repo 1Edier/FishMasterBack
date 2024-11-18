@@ -1,7 +1,7 @@
 const { createData, getAllDatos, getDatosById } = require('../models/datos.model');
 
 const createNewDatos = async (req, res) => {
-    const { id_usuario_especie, temperatura, ph, nivel, catidad_peces, fecha} = req.body;
+    const { id_usuario_especie, temperatura, ph, nivel, catidad_peces} = req.body;
 
     const NewData = {
         id_usuario_especie,
@@ -9,7 +9,6 @@ const createNewDatos = async (req, res) => {
         ph,
         nivel,
         catidad_peces,
-        fecha
     };
 
     try {

@@ -75,17 +75,18 @@ const updateEspecie = async (req, res) => {
 
 const deleteEspecie = async (req, res) => {
     const { id } = req.params;
-
+  
     try {
-        const especie = await deleteEspecieById(id);
-        if (!especie) {
-            return res.status(404).json({ message: 'Especie no encontrada' });
-        }
-        return res.status(200).json({ message: 'Especie eliminada', especie });
+      console.log('ID recibido para eliminación:', id); // Log para depuraciónx
+      const deletedEspecie = await deleteEspecieById(id);
+      if (!deletedEspecie) {
+        return res.status(404).json({ message: 'Especie no encontrada' });
+      }
+      return res.status(200).json({ message: 'Especie eliminada', especie: deletedEspecie });
     } catch (error) {
-        return res.status(500).json({ message: 'Error al eliminar la especie', error });
+      console.error('Error al eliminar la especie:', error);
+      return res.status(500).json({ message: 'Error interno al eliminar la especie', error });
     }
-};
-
+  };
 
 module.exports = { createNewEspecie, getAllEspecies, getEspecie, updateEspecie, deleteEspecie };

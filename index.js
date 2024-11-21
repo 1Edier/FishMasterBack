@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT;
+const cors = require('cors');
+app.use(cors());
 
 app.use(express.json());
 
@@ -16,12 +18,12 @@ const alimentacionRouter =require('./src/routes/alimentacion.routes')
 const { authenticateToken } = require('./src/middleware/auth.middleware');
 
 app.use('/login', loginRouter);
-app.use('/users', authenticateToken, userRouter);
-app.use('/especies', authenticateToken, especieRouter);
-app.use('/especies_user', authenticateToken, especieAsignRouter);
-app.use('/recomendaciones', authenticateToken, recomendacionesRouter);
-app.use('/datos', authenticateToken, datosRouter);
-app.use('/alimentacion', authenticateToken, alimentacionRouter);
+app.use('/users', userRouter);
+app.use('/especies', especieRouter);
+app.use('/especies_user', especieAsignRouter);
+app.use('/recomendaciones', recomendacionesRouter);
+app.use('/datos', datosRouter);
+app.use('/alimentacion', alimentacionRouter);
 
 
 app.listen(PORT, () => {

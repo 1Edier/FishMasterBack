@@ -17,7 +17,7 @@ const login = async (req, res) => {
         }
 
         // Comparar la contraseña ingresada con la contraseña hasheada almacenada
-        const isMatch = await bcrypt.compare(password, user.contrasena); 
+        const isMatch = await bcrypt.compare(password, user.contrasena);
 
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciales incorrectas' });
@@ -26,7 +26,8 @@ const login = async (req, res) => {
         // Si las credenciales son correctas, generar el token JWT
         const token = jwt.sign({ id: user.id, email: user.correo }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
-        return res.status(200).json({ message: 'Login exitoso', token });
+        // Enviar el token y el ID del usuario en la respuesta
+        return res.status(200).json({ message: 'Login exitoso', userId: user.id_usuario,  });
 
     } catch (error) {
         console.error('Error al realizar el login:', error);

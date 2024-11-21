@@ -1,21 +1,22 @@
 const { createAlimentacion, getAllAlimentacion, getAlimentacionById } = require('../models/alimentacion.model');
 
 const createNewalimentacion = async (req, res) => {
-    const { id_usuario_especie, fecha, cantidad } = req.body;
+    const { id_usuario_especie, cantidad } = req.body;
 
     const NewData = {
         id_usuario_especie,
-        fecha,
         cantidad
     };
 
     try {
         const data = await createAlimentacion(NewData);
-        return res.status(201).json({ message: 'Datos agregados con exito', data });
+        return res.status(201).json({ message: 'Datos agregados con éxito', data });
     } catch (error) {
         return res.status(500).json({ message: 'Error al agregar los datos', error });
     }
 };
+
+
 
 const getDatosAlimentecion = async (req, res) => {
     try {

@@ -1,7 +1,8 @@
 const pool = require('../configs/db.config');
 
 const createAlimentacion = async (datos) => {
-    const { id_usuario_especie, fecha, cantidad } = datos;
+    const { cantidad } = datos;
+  const fecha = new Date();
     const [result] = await pool.query(
         'INSERT INTO alimentacion (fecha, cantidad_alimento) VALUES (?,  ?)',
         [ fecha, cantidad]

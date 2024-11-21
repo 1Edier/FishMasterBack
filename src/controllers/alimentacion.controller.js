@@ -1,10 +1,11 @@
 const { createAlimentacion, getAllAlimentacion, getAlimentacionById } = require('../models/alimentacion.model');
 
 const createNewalimentacion = async (req, res) => {
-    const {cantidad } = req.body;
+    const { id_usuario_especie, fecha, cantidad } = req.body;
 
     const NewData = {
-        
+        id_usuario_especie,
+        fecha,
         cantidad
     };
 

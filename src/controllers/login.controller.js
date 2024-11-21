@@ -27,7 +27,7 @@ const login = async (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.correo }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
         // Enviar el token y el ID del usuario en la respuesta
-        return res.status(200).json({ message: 'Login exitoso', userId: user.id_usuario,  });
+        return res.status(200).json({ message: 'Login exitoso', userId: user.id_usuario,token  });
 
     } catch (error) {
         console.error('Error al realizar el login:', error);

@@ -1,45 +1,50 @@
-import requests
-import mysql.connector
-import numpy as np
+from flask import Flask, request, jsonify
+from flask_cors import CORS  # Importa la extensión
 from dotenv import load_dotenv
 import os
-import decimal
 
-# Cargar las variables de entorno
+# Cargar variables de entorno
 load_dotenv()
+app = Flask(__name__)
+CORS(app)  # Habilita CORS para todas las rutas
 
-# Función que se conecta a la base de datos y obtiene las especies
-def obtener_datos_especies():
-    host = os.getenv('DB_HOST')
-    user = os.getenv('DB_USER')
-    password = os.getenv('DB_PASSWORD')
-    database = os.getenv('DB')
-
-    connection = mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password,
-        database=database
-    )
-
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM especies")
-    especies = cursor.fetchall()
-    cursor.close()
-    connection.close()
-    return especies
-
-# Funciones para calcular la frecuencia de alimentación
+# Función para calcular frecuencia de alimentación
 def calcular_frecuencia_alimentacion(edad, tamaño, peso):
-    edad = float(edad) if isinstance(edad, decimal.Decimal) else edad
-    tamaño = float(tamaño) if isinstance(tamaño, decimal.Decimal) else tamaño
-    peso = float(peso) if isinstance(peso, decimal.Decimal) else peso
-
     coef_edad = 0.1
-    coef_tamano = 0.2
+    coef_tamaño = 0.2
     coef_peso = 0.3
+    frecuencia = coef_edad * float(edad) + coef_tamaño * float(tamaño) + coef_peso * float(peso)
+    # Escalamos las horas para que tengan un rango más amplio
+    horas = max(24 / (frecuencia + 1), 1)  # +1 para evitar valores extremos
+    return horas
 
-    frecuencia = coef_edad * edad + coef_tamano * tamaño + coef_peso * peso
-    return max(frecuencia, 0)
 
+@app.route('/calcular_recomendaciones', methods=['POST'])
+def calcular_recomendaciones():
+    data = request.json
 
+    # Validación de datos de entrada
+    if not all(key in data for key in ("edad", "tamaño", "peso")):
+        return jsonify({"error": "Faltan datos para el cálculo"}), 400
+
+    try:
+        # Calcular las recomendaciones
+        frecuencia_alimentacion_horas = calcular_frecuencia_alimentacion(
+            data["edad"], data["tamaño"], data["peso"]
+        )
+        cantidad_alimento_gramos = round(frecuencia_alimentacion_horas * 10, 2)  # Ejemplo: proporcional a las horas
+
+        recommendations = {
+            "frecuencia_alimentacion": round(frecuencia_alimentacion_horas, 2),  # En horas
+            "cantidad_alimento": cantidad_alimento_gramos,  # En gramos
+            "temperatura": 22.0,  # Constante o fórmula
+            "ph": 7.5  # Constante o fórmula
+        }
+
+        return jsonify(recommendations), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Ejecuta el servidor Flask
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)

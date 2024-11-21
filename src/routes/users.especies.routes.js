@@ -1,9 +1,12 @@
 const express = require('express');
-const { asignNewEspecie, getEspecies, deleteEspecie  } = require('../controllers/users.especies');
 const router = express.Router();
+const { asignNewEspecie, getEspecies, deleteEspecie, updateEspecie,getUserById } = require('../controllers/users.especies');
 
-router.post('/', asignNewEspecie);
-router.get('/', getEspecies);
-router.delete('/', deleteEspecie)
+// Definir rutas
+router.post('/', asignNewEspecie);  // Asignar especie
+router.get('/', getEspecies);  // Obtener todas las especies
+router.delete('/:id', deleteEspecie);  // Eliminar especie
+router.put('/:id', updateEspecie);  // Actualizar especie
+router.get('/:id', getUserById);
 
 module.exports = router;

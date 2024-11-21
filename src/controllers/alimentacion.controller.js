@@ -10,11 +10,13 @@ const createNewalimentacion = async (req, res) => {
 
     try {
         const data = await createAlimentacion(NewData);
-        return res.status(201).json({ message: 'Datos agregados con exito', data });
+        return res.status(201).json({ message: 'Datos agregados con éxito', data });
     } catch (error) {
         return res.status(500).json({ message: 'Error al agregar los datos', error });
     }
 };
+
+
 
 const getDatosAlimentecion = async (req, res) => {
     try {

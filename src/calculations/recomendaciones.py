@@ -1,21 +1,20 @@
+import requests
 import mysql.connector
 import numpy as np
 from dotenv import load_dotenv
 import os
 import decimal
 
-# Cargar las variables de entorno desde el archivo .env
+# Cargar las variables de entorno
 load_dotenv()
 
 # Función que se conecta a la base de datos y obtiene las especies
 def obtener_datos_especies():
-    # Obtener los valores desde las variables de entorno
     host = os.getenv('DB_HOST')
     user = os.getenv('DB_USER')
     password = os.getenv('DB_PASSWORD')
     database = os.getenv('DB')
 
-    # Conexión a la base de datos usando las variables de entorno
     connection = mysql.connector.connect(
         host=host,
         user=user,
@@ -24,62 +23,61 @@ def obtener_datos_especies():
     )
 
     cursor = connection.cursor(dictionary=True)
-
-    # Realizamos la consulta SQL para obtener las especies
     cursor.execute("SELECT * FROM especies")
-
-    # Obtenemos todos los resultados
     especies = cursor.fetchall()
-
-    # Cerramos la conexión
     cursor.close()
     connection.close()
-
     return especies
 
-# Función que calcula la frecuencia de alimentación de un pez
+# Funciones para calcular la frecuencia de alimentación
 def calcular_frecuencia_alimentacion(edad, tamaño, peso):
-    # Convertir los valores a float si son tipo Decimal
     edad = float(edad) if isinstance(edad, decimal.Decimal) else edad
     tamaño = float(tamaño) if isinstance(tamaño, decimal.Decimal) else tamaño
     peso = float(peso) if isinstance(peso, decimal.Decimal) else peso
 
-    # Suponiendo que la frecuencia de alimentación aumenta con el tamaño y peso
-    coef_edad = 0.1  # coeficiente que afecta la edad
-    coef_tamano = 0.2  # coeficiente que afecta el tamaño
-    coef_peso = 0.3  # coeficiente que afecta el peso
+    coef_edad = 0.1
+    coef_tamano = 0.2
+    coef_peso = 0.3
 
-    # Definimos una fórmula simplificada para calcular la frecuencia de alimentación:
-    # Frecuencia = coef_edad * edad + coef_tamano * tamaño + coef_peso * peso
     frecuencia = coef_edad * edad + coef_tamano * tamaño + coef_peso * peso
+    return max(frecuencia, 0)
 
-    # Aseguramos que la frecuencia de alimentación no sea negativa
-    frecuencia = max(frecuencia, 0)
+# Función para enviar las recomendaciones a la API
+def enviar_recomendaciones(recomendaciones):
+    url = "http://localhost:4000/recomendaciones/createrecomedation"
+    headers = {'Content-Type': 'application/json'}
 
-    return frecuencia
-# Función que calcula la frecuencia de alimentación normalizada usando distribución normal
-def calcular_frecuencia_normalizada(edad, tamaño, peso):
-    media = calcular_frecuencia_alimentacion(edad, tamaño, peso)
-    desviacion_estandar = 1  # Desviación estándar asumida
+    for recomendacion in recomendaciones:
+        try:
+            response = requests.post(url, json=recomendacion, headers=headers)
+            if response.status_code == 201:
+                print(f"Recomendación para {recomendacion['id_especie']} enviada correctamente.")
+            else:
+                print(f"Error enviando recomendación para {recomendacion['id_especie']}: {response.text}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error de conexión al enviar recomendación: {e}")
 
-    # Usamos una distribución normal para generar la frecuencia de alimentación
-    frecuencia_normalizada = np.random.normal(media, desviacion_estandar)
-    frecuencia_normalizada = max(frecuencia_normalizada, 0)  # Evitar valores negativos
-    return frecuencia_normalizada
 
-# Obtenemos las especies desde la base de datos
+# Obtener especies y calcular recomendaciones
 especies = obtener_datos_especies()
+recomendaciones = []
 
-# Calculamos la frecuencia de alimentación para cada especie
 for especie in especies:
     edad = especie['edad_promedio']
     tamaño = especie['tamano']
     peso = especie['peso_promedio']
 
-    # Calculando la frecuencia de alimentación usando el modelo
     frecuencia = calcular_frecuencia_alimentacion(edad, tamaño, peso)
-    print(f"La frecuencia de alimentación de {especie['nombre_comun']} es: {frecuencia} veces por semana")
 
-    # Calculando la frecuencia de alimentación con variabilidad (distribución normal)
-    frecuencia_con_variabilidad = calcular_frecuencia_normalizada(edad, tamaño, peso)
-    print(f"La frecuencia de alimentación normalizada de {especie['nombre_comun']} es: {frecuencia_con_variabilidad:.2f} veces por semana\n")
+    # Crear recomendación
+    recomendacion = {
+        "id_especie": especie['id_especie'],
+        "frecuencia_alimentacion": frecuencia,
+        "cantidad_alimento": 5.0,  # Valor ejemplo, ajusta según tus reglas
+        "temperatura": 25.0,  # Valor ejemplo
+        "ph": 7.5  # Valor ejemplo
+    }
+    recomendaciones.append(recomendacion)
+
+# Enviar recomendaciones a la API
+enviar_recomendaciones(recomendaciones)

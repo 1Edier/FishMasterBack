@@ -6,7 +6,7 @@ const createEspecie = async (especie) => {
         'INSERT INTO especies (nombre_comun, nombre_cientifico, edad_promedio, tamano, peso_promedio, habitat) VALUES (?, ?, ?, ?, ?, ?)',
         [nombre_comun, nombre_cientifico, edad, tamaño, peso, habitat]
     );
-    return { id: result.insertId, nombre_comun };  // Devolvemos el nuevo usuario con su ID asignado por la BD
+    return { id: result.insertId, nombre_comun };  
 };
 
 const getEspecies = async () => {
@@ -62,9 +62,9 @@ const updateEspecieById = async (id, updatedData) => {
     return getEspecieById(id);
 };
 
-
 const deleteEspecieById = async (id) => {
-    const especieToDelete = await getUserById(id);
+    const especieToDelete = await getEspecieById(id);
+
     if (!especieToDelete) {
         return null;  
     }

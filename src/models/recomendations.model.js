@@ -10,19 +10,30 @@ const createRecomendation = async (recomendation) => {
 };
 
 const getRecomendaciones = async () => {
-    const [rows] = await pool.query('SELECT * FROM recomendaciones');
-    return rows;
+    try {
+        const [rows] = await pool.query('SELECT * FROM recomendaciones');
+        return rows;
+    } catch (error) {
+        throw new Error('Error al obtener las recomendaciones: ' + error.message);
+    }
 };
 
 const getRecomendacionById = async (id) => {
-    const [rows] = await pool.query('SELECT * FROM recomendaciones WHERE id_especie = ?', [id]);
-    return rows.length > 0 ? rows[0] : null;
+    try {
+        const [rows] = await pool.query('SELECT * FROM recomendaciones WHERE id_especie = ?', [id]);
+        return rows.length > 0 ? rows[0] : null;
+    } catch (error) {
+        throw new Error('Error al obtener la recomendación: ' + error.message);
+    }
 };
 
 const deleteRecomendacionById = async (id) => {
-    const [result] = await pool.query('DELETE FROM recomendaciones WHERE id_recomendacion = ?', [id] );
-    return result;  
+    try {
+        const [result] = await pool.query('DELETE FROM recomendaciones WHERE id_recomendacion = ?', [id]);
+        return result;
+    } catch (error) {
+        throw new Error('Error al eliminar la recomendación: ' + error.message);
+    }
 };
-
 
 module.exports = { createRecomendation, getRecomendaciones, getRecomendacionById, deleteRecomendacionById };

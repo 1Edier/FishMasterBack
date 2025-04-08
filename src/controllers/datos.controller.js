@@ -1,23 +1,27 @@
 const { createData, getAllDatos, getDatosById } = require('../models/datos.model');
 
 const createNewDatos = async (req, res) => {
-    const { id_usuario_especie, temperatura, ph, nivel, catidad_peces} = req.body;
+    const { id_usuario_especie, temperatura, ph, nivel, cantidad_peces } = req.body;
+
+    const fecha = new Date(); // fecha actual
 
     const NewData = {
         id_usuario_especie,
         temperatura,
         ph,
         nivel,
-        catidad_peces,
+        cantidad_peces,
+        fecha,
     };
 
     try {
         const data = await createData(NewData);
-        return res.status(201).json({ message: 'Datos agregados con exito', data });
+        return res.status(201).json({ message: 'Datos agregados con éxito', data });
     } catch (error) {
         return res.status(500).json({ message: 'Error al agregar los datos', error });
     }
 };
+
 
 const getDatos = async (req, res) => {
     try {

@@ -27,7 +27,7 @@ const alimentacionRouter = require('./src/routes/alimentacion.routes');
 const { authenticateToken } = require('./src/middleware/auth.middleware');
 
 app.use('/login', loginRouter);
-app.use('/users',authenticateToken, userRouter);
+app.use('/users', userRouter);
 app.use('/especies',authenticateToken, especieRouter);
 app.use('/especies_user',authenticateToken, especieAsignRouter);
 app.use('/recomendaciones',authenticateToken, recomendacionesRouter);
